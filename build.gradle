@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.5'
 	id 'io.spring.dependency-management' version '1.1.4'
+	id 'com.google.cloud.tools.jib' version '3.4.2'
 }
 
 group = 'org.causwengteam13'
@@ -9,6 +10,10 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	sourceCompatibility = '17'
+}
+
+jar {
+	enabled = false
 }
 
 configurations {
@@ -25,6 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -33,4 +39,23 @@ dependencies {
 	// Database
 	implementation 'com.h2database:h2'
 	implementation 'mysql:mysql-connector-java:8.0.33'
+}
+
+jib {
+	from {
+		image = "openjdk:17-jdk-alpine"
+	}
+	to {
+		image = "806246625807.dkr.ecr.ap-northeast-2.amazonaws.com/issue-tracker-server"
+		credHelper = "ecr-login"
+	}
+	container {
+		jvmFlags = [
+				"-Dspring.profiles.active=prod",
+				"-Dspring.datasource.url=${System.getProperty('SPRING_DATASOURCE_URL')}",
+				"-Dspring.datasource.username=${System.getProperty('SPRING_DATASOURCE_USERNAME')}",
+				"-Dspring.datasource.password=${System.getProperty('SPRING_DATASOURCE_PASSWORD')}"
+		]
+		ports = ["8080"]
+	}
 }

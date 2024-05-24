@@ -48,5 +48,9 @@ jobs:
           key: ${{ secrets.EC2_KEY }}
           script:
             'aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_URL }} &&
-              docker container rm -f ${{ secrets.CONTAINER_NAME }};
+              CONTAINER_ID=$(docker ps -aqf "name=${{ secrets.CONTAINER_NAME }}");
+              docker stop $CONTAINER_ID;
+              docker rm $CONTAINER_ID;
+              IMAGE_ID=$(docker images -q ${{ secrets.ECR_URL }}/${{ secrets.ECR_REPOSITORY }}:latest);
+              docker rmi -f $IMAGE_ID;
               docker container run -d -p 80:8080 --name ${{ secrets.CONTAINER_NAME }} ${{ secrets.ECR_URL }}/${{ secrets.ECR_REPOSITORY }}:latest;'

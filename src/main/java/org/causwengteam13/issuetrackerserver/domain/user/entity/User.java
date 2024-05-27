@@ -37,11 +37,12 @@ public class User extends AbstractEntity {
 	private List<ProjectMembership> memberships = new ArrayList<>();
 
 	@Builder
-	private User(String name) {
+	private User(Long id, String name) {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("User title must not be blank");
 		}
 
+		this.id = id;
 		this.name = name;
 	}
 

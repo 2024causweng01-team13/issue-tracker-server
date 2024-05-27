@@ -15,30 +15,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommonResponse<T> {
 
-	private HttpStatus httpStatus;
 	private String message;
 	private String errorCode;
 	private T data;
 
 	public static <T>CommonResponse success(String message, T data) {
 		return CommonResponse.builder()
-			.httpStatus(HttpStatus.OK)
 			.message(message)
 			.data(data)
 			.build();
 	}
 
-	public static <T>CommonResponse fail(HttpStatus httpStatus, Exception e) {
+	public static <T>CommonResponse fail(Exception e) {
 		return CommonResponse.builder()
-			.httpStatus(httpStatus)
 			.message(e.getMessage())
+			.errorCode("INTERNAL_SERVER_ERROR")
 			.data(e.getStackTrace())
 			.build();
 	}
 
-	public static <T>CommonResponse fail(HttpStatus httpStatus, Problem e) {
+	public static <T>CommonResponse fail(Problem e) {
 		return CommonResponse.builder()
-			.httpStatus(httpStatus)
 			.message(e.getMessage())
 			.errorCode(e.getErrorCode())
 			.data(e.getCause())

@@ -2,6 +2,7 @@ package org.causwengteam13.issuetrackerserver.presentation.restapi;
 
 import org.causwengteam13.issuetrackerserver.common.Problem;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -14,14 +15,14 @@ public class ErrorController {
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(value = ConstraintViolationException.class)
+	@ExceptionHandler(value = {ConstraintViolationException.class, IllegalArgumentException.class})
 	public CommonResponse onConstraintViolationException(ConstraintViolationException e) {
-		return CommonResponse.fail(HttpStatus.BAD_REQUEST, e);
+		return CommonResponse.fail(e);
 	}
 
 	@ResponseBody
 	@ExceptionHandler(value = Problem.class)
-	public CommonResponse onProblem(Problem e) {
+	public ResponseEntity onProblem(Problem e) {
 		HttpStatus httpStatus = switch (e.getCategory()) {
 			case INVALID_REQUEST -> HttpStatus.BAD_REQUEST;
 			case UNAUTHORIZED -> HttpStatus.UNAUTHORIZED;
@@ -31,13 +32,16 @@ public class ErrorController {
 			default -> HttpStatus.SERVICE_UNAVAILABLE;
 		};
 
-		return CommonResponse.fail(httpStatus, e);
+		return new ResponseEntity<>(
+			CommonResponse.fail(e),
+			httpStatus
+		);
 	}
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(value = Exception.class)
 	public CommonResponse onException(Exception e) {
-		return CommonResponse.fail(HttpStatus.INTERNAL_SERVER_ERROR, e);
+		return CommonResponse.fail(e);
 	}
 }

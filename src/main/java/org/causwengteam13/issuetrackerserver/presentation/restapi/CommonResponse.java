@@ -28,7 +28,7 @@ public class CommonResponse<T> {
 
 	public static <T>CommonResponse fail(Exception e) {
 		return CommonResponse.builder()
-			.message(e.getMessage())
+			.message(e.getMessage() + " " + e.getCause())
 			.errorCode("INTERNAL_SERVER_ERROR")
 			.data(e.getStackTrace())
 			.build();

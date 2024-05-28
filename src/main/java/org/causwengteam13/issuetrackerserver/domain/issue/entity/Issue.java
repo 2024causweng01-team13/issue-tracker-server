@@ -108,6 +108,20 @@ public class Issue extends AbstractEntity {
 		return comment;
 	}
 
+	public void assign(User assigner, User assignee) {
+		if (!project.isAuthorized(assigner)) {
+			throw new UserUnauthorizedInProjectProblem(assigner.getId());
+		}
+
+		if (!project.isAuthorized(assignee)) {
+			throw new UserUnauthorizedInProjectProblem(assignee.getId());
+		}
+
+		this.assignee = assignee;
+		this.status = IssueStatus.ASSIGNED;
+		addComment(assigner, String.format("Assigned to %s", assignee.getName()));
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

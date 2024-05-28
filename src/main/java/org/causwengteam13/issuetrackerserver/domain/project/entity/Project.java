@@ -77,6 +77,15 @@ public class Project extends AbstractEntity {
 			.build();
 	}
 
+	public void addMember(User user) {
+		memberships.add(ProjectMembership.of(this, user));
+	}
+
+	public Boolean isAuthorized(User user) {
+		return manager.equals(user) ||
+			memberships.stream().anyMatch(membership -> membership.getMember().equals(user));
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

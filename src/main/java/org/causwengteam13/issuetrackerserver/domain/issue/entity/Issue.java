@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.causwengteam13.issuetrackerserver.common.AbstractEntity;
 import org.causwengteam13.issuetrackerserver.domain.comment.entity.Comment;
 import org.causwengteam13.issuetrackerserver.domain.project.entity.Project;
+import org.causwengteam13.issuetrackerserver.domain.project.problem.UserUnauthorizedInProjectProblem;
 import org.causwengteam13.issuetrackerserver.domain.user.entity.User;
 
 import jakarta.persistence.CascadeType;
@@ -89,6 +90,22 @@ public class Issue extends AbstractEntity {
 		this.assignee = assignee;
 		this.priority = priority;
 		this.status = assignee == null ? IssueStatus.NEW : IssueStatus.ASSIGNED;
+	}
+
+	public Comment addComment(User author, String content) {
+		if (!project.isAuthorized(author)) {
+			throw new UserUnauthorizedInProjectProblem(author.getId());
+		}
+
+		Comment comment = Comment.builder()
+			.author(author)
+			.content(content)
+			.parentIssue(this)
+			.build();
+
+		this.comments.add(comment);
+
+		return comment;
 	}
 
 	@Override

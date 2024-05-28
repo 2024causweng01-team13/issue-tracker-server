@@ -36,4 +36,59 @@ public class ProjectTest {
 			assertDoesNotThrow(() -> Project.of(manager, "title", "description"));
 		}
 	}
+
+	@Nested
+	@DisplayName("멤버 추가 테스트")
+	class AddMemberTest {
+
+		private final User manager = User.builder().id(1L).name("username").build();
+		private final Project project = Project.builder()
+			.title("project title")
+			.description("project description")
+			.manager(manager).build();
+
+		@Test
+		@DisplayName("멤버를 추가할 수 있다.")
+		void test() {
+			User member = User.builder().id(2L).name("member").build();
+			project.addMember(member);
+
+			assertTrue(project.getMemberships().stream().anyMatch(membership ->
+				membership.getMember().equals(member)));
+		}
+	}
+
+	@Nested
+	@DisplayName("권한이 있는 멤버 확인 테스트")
+	class IsAuthorizedTest {
+
+		private final User manager = User.builder().id(1L).name("username").build();
+		private final Project project = Project.builder()
+			.title("project title")
+			.description("project description")
+			.manager(manager).build();
+
+		@Test
+		@DisplayName("프로젝트의 매니저는 프로젝트에 권한이 있다.")
+		void successOnManager() {
+			assertTrue(project.isAuthorized(manager));
+		}
+
+		@Test
+		@DisplayName("프로젝트의 멤버는 프로젝트에 권한이 있다.")
+		void successOnMember() {
+			User member = User.builder().id(2L).name("member").build();
+			project.addMember(member);
+
+			assertTrue(project.isAuthorized(member));
+		}
+
+		@Test
+		@DisplayName("프로젝트의 매니저도, 멤버도 아닌 유저는 프로젝트에 권한이 없다.")
+		void failOnNotManagerAndNotMember() {
+			User user = User.builder().id(3L).name("user").build();
+
+			assertFalse(project.isAuthorized(user));
+		}
+	}
 }

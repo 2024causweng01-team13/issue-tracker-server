@@ -9,6 +9,7 @@ import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
@@ -21,9 +22,12 @@ public class IssueController {
 	private final AssignIssue assignIssue;
 
 	@PostMapping("/:issueId/assign")
-	public CommonResponse<AssignIssueResponse> assignIssue(@RequestBody AssignIssueRequest request) {
+	public CommonResponse<AssignIssueResponse> assignIssue(
+		@RequestParam(value = "issueId") Long issueId,
+		@RequestBody AssignIssueRequest request
+	) {
 		AssignIssueCommand command = AssignIssueCommand.builder()
-			.issueId(request.getIssueId())
+			.issueId(issueId)
 			.assignerId(request.getAssignerId())
 			.assigneeId(request.getAssigneeId())
 			.comment(request.getComment())

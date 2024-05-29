@@ -23,3 +23,7 @@ spring:
   sql:
     init:
       platform: h2
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

@@ -1,6 +1,6 @@
 package org.causwengteam13.issuetrackerserver.domain.project.entity;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import org.causwengteam13.issuetrackerserver.domain.user.entity.User;
 
@@ -37,7 +37,7 @@ public class ProjectMembership {
 	@JoinColumn(name = "member_id")
 	private User member;
 
-	private ZonedDateTime joinedAt = ZonedDateTime.now();
+	private LocalDateTime joinedAt = LocalDateTime.now();
 
 	public static ProjectMembership of(Project project, User member) {
 		return ProjectMembership.builder()

@@ -30,7 +30,13 @@ public class CommentController {
 
 		CreateCommentResult result = createComment.execute(command);
 
-		CreateCommentResponse response = new CreateCommentResponse(result.commentId());
+		CreateCommentResponse response = CreateCommentResponse.builder()
+			.id(result.id())
+			.authorName(result.authorName())
+			.content(result.content())
+			.createdAt(result.createdAt())
+			.updatedAt(result.updatedAt())
+			.build();
 
 		return CommonResponse.success("Create Comment success", response);
 	}

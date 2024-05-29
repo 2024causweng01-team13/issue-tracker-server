@@ -37,8 +37,8 @@ public class IssueController {
 
 		AssignIssueResponse response = AssignIssueResponse.builder()
 			.issueId(result.issueId())
-			.assignerId(result.assignerId())
-			.assigneeId(result.assigneeId())
+			.assignerName(result.assignerName())
+			.assigneeName(result.assigneeName())
 			.status(result.status())
 			.build();
 

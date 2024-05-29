@@ -1,7 +1,7 @@
 package org.causwengteam13.issuetrackerserver.domain.project.result;
 
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import org.causwengteam13.issuetrackerserver.domain.project.entity.Project;
 import org.causwengteam13.issuetrackerserver.domain.project.entity.ProjectStatus;
@@ -21,6 +21,8 @@ public class FindProjectsResult {
 			.description(project.getDescription())
 			.manager(project.getManager())
 			.status(project.getStatus())
+			.createdAt(project.getCreatedAt())
+			.updatedAt(project.getUpdatedAt())
 			.build()).toList();
 	}
 
@@ -29,26 +31,21 @@ public class FindProjectsResult {
 		private final Long projectId;
 		private final String title;
 		private final String description;
-		private final UserResult manager;
+		private final String managerName;
 		private final ProjectStatus status;
+		private final LocalDateTime createdAt;
+		private final LocalDateTime updatedAt;
 
 		@Builder
-		private ProjectResult(Long projectId, String title, String description, User manager, ProjectStatus status) {
+		private ProjectResult(Long projectId, String title, String description, User manager, ProjectStatus status,
+			LocalDateTime createdAt, LocalDateTime updatedAt) {
 			this.projectId = projectId;
 			this.title = title;
 			this.description = description;
-			this.manager = manager == null ? null : UserResult.builder()
-				.userId(manager.getId())
-				.name(manager.getName())
-				.build();
+			this.managerName = manager == null ? null : manager.getName();
 			this.status = status;
-		}
-
-		@Builder
-		public record UserResult(
-			Long userId,
-			String name
-		) {
+			this.createdAt = createdAt;
+			this.updatedAt = updatedAt;
 		}
 	}
 }

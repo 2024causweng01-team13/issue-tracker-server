@@ -1,5 +1,6 @@
 package org.causwengteam13.issuetrackerserver.presentation.restapi.project.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.causwengteam13.issuetrackerserver.domain.project.entity.ProjectStatus;
@@ -25,26 +26,17 @@ public class FindProjectsResponse {
 		private final Long projectId;
 		private final String title;
 		private final String description;
-		private final UserResponse manager;
+		private final String managerName;
 		private final ProjectStatus status;
+		private final LocalDateTime createdAt;
 
 		public static ProjectResponse from(FindProjectsResult.ProjectResult result) {
 			return ProjectResponse.builder()
 				.projectId(result.getProjectId())
 				.title(result.getTitle())
 				.description(result.getDescription())
-				.manager(result.getManager() == null ? null : UserResponse.builder()
-					.userId(result.getManager().userId())
-					.name(result.getManager().name())
-					.build())
+				.managerName(result.getManagerName())
 				.build();
-		}
-
-		@Builder
-		public record UserResponse(
-			Long userId,
-			String name
-		) {
 		}
 	}
 }

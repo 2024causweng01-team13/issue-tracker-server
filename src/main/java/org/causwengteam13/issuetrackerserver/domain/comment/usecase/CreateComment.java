@@ -33,6 +33,12 @@ public class CreateComment {
 		Comment comment = issue.addComment(author, command.getContent());
 		Comment savedComment = commentRepository.save(comment);
 
-		return new CreateCommentResult(savedComment.getId());
+		return CreateCommentResult.builder()
+			.id(savedComment.getId())
+			.authorName(savedComment.getAuthor().getName())
+			.content(savedComment.getContent())
+			.createdAt(savedComment.getCreatedAt())
+			.updatedAt(savedComment.getUpdatedAt())
+			.build();
 	}
 }

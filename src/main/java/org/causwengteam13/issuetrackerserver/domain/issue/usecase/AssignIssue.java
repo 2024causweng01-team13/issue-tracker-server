@@ -33,8 +33,8 @@ public class AssignIssue {
 
 		return AssignIssueResult.builder()
 			.issueId(issue.getId())
-			.assignerId(assigner.getId())
-			.assigneeId(assignee.getId())
+			.assignerName(assigner.getName())
+			.assigneeName(issue.getAssignee().getName())
 			.status(issue.getStatus())
 			.build();
 	}

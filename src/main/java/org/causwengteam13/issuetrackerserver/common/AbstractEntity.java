@@ -1,6 +1,6 @@
 package org.causwengteam13.issuetrackerserver.common;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -16,8 +16,8 @@ import lombok.Getter;
 public class AbstractEntity {
 
 	@CreatedDate
-	private ZonedDateTime createdAt;
+	private LocalDateTime createdAt;
 
 	@LastModifiedDate
-	private ZonedDateTime updatedAt;
+	private LocalDateTime updatedAt;
 }

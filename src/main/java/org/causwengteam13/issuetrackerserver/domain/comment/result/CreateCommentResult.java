@@ -1,4 +1,15 @@
 package org.causwengteam13.issuetrackerserver.domain.comment.result;
 
-public record CreateCommentResult(Long commentId) {
+import java.time.LocalDateTime;
+
+import lombok.Builder;
+
+@Builder
+public record CreateCommentResult(
+	Long id,
+	String authorName,
+	String content,
+	LocalDateTime createdAt,
+	LocalDateTime updatedAt
+) {
 }

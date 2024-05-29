@@ -7,8 +7,8 @@ import lombok.Builder;
 @Builder
 public record AssignIssueResult(
 	Long issueId,
-	Long assignerId,
-	Long assigneeId,
+	String assignerName,
+	String assigneeName,
 	IssueStatus status
 ) {
 }

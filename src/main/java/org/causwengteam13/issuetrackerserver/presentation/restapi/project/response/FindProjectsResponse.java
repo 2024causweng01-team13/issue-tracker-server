@@ -23,7 +23,7 @@ public class FindProjectsResponse {
 	@Getter
 	@Builder
 	public static class ProjectResponse {
-		private final Long projectId;
+		private final Long id;
 		private final String title;
 		private final String description;
 		private final String managerName;
@@ -32,7 +32,7 @@ public class FindProjectsResponse {
 
 		public static ProjectResponse from(FindProjectsResult.ProjectResult result) {
 			return ProjectResponse.builder()
-				.projectId(result.getProjectId())
+				.id(result.getId())
 				.title(result.getTitle())
 				.description(result.getDescription())
 				.managerName(result.getManagerName())

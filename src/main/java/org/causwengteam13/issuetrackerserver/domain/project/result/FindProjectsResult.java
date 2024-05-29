@@ -16,7 +16,7 @@ public class FindProjectsResult {
 
 	public FindProjectsResult(List<Project> projects) {
 		this.projects = projects.stream().map(project -> ProjectResult.builder()
-			.projectId(project.getId())
+			.id(project.getId())
 			.title(project.getTitle())
 			.description(project.getDescription())
 			.manager(project.getManager())
@@ -28,7 +28,7 @@ public class FindProjectsResult {
 
 	@Getter
 	public static class ProjectResult {
-		private final Long projectId;
+		private final Long id;
 		private final String title;
 		private final String description;
 		private final String managerName;
@@ -37,9 +37,9 @@ public class FindProjectsResult {
 		private final LocalDateTime updatedAt;
 
 		@Builder
-		private ProjectResult(Long projectId, String title, String description, User manager, ProjectStatus status,
+		private ProjectResult(Long id, String title, String description, User manager, ProjectStatus status,
 			LocalDateTime createdAt, LocalDateTime updatedAt) {
-			this.projectId = projectId;
+			this.id = id;
 			this.title = title;
 			this.description = description;
 			this.managerName = manager == null ? null : manager.getName();

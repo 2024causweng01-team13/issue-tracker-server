@@ -36,6 +36,7 @@ public class AssignIssue {
 			.assignerName(assigner.getName())
 			.assigneeName(issue.getAssignee().getName())
 			.status(issue.getStatus())
+			.updatedAt(issue.getUpdatedAt())
 			.build();
 	}
 }

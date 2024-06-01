@@ -37,6 +37,7 @@ public class ProjectMembership {
 	@JoinColumn(name = "member_id")
 	private User member;
 
+	@Builder.Default
 	private LocalDateTime joinedAt = LocalDateTime.now();
 
 	public static ProjectMembership of(Project project, User member) {

@@ -1,14 +1,19 @@
 package org.causwengteam13.issuetrackerserver.presentation.restapi.project;
 
+import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByDateCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.CreateProjectCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.FindProjectsCommand;
+import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByDateResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.CreateProjectResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.FindProjectsResult;
+import org.causwengteam13.issuetrackerserver.domain.project.usecase.AnalyzeProjectByDate;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.CreateProject;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.FindProjects;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.AnalyzeProjectByDateRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.CreateProjectRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.FindProjectsRequest;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AnalyzeProjectByDateResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.CreateProjectResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.FindProjectsResponse;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +31,7 @@ public class ProjectController {
 
 	private final CreateProject createProject;
 	private final FindProjects findProjects;
+	private final AnalyzeProjectByDate analyzeProjectByDate;
 
 	@Operation(summary = "프로젝트 생성")
 	@PostMapping
@@ -53,8 +59,41 @@ public class ProjectController {
 
 		FindProjectsResult result = findProjects.execute(command);
 
-		FindProjectsResponse response = FindProjectsResponse.from(result);
+		FindProjectsResponse response = new FindProjectsResponse(
+			result.getProjects().stream().map(p -> FindProjectsResponse.ProjectResponse.builder()
+				.id(p.getId())
+				.title(p.getTitle())
+				.description(p.getDescription())
+				.managerName(p.getManagerName())
+				.status(p.getStatus())
+				.createdAt(p.getCreatedAt())
+				.build()
+			).toList()
+		);
 
 		return CommonResponse.success("Projects found", response);
+	}
+
+	@Operation(summary = "날짜별 프로젝트 분석")
+	@PostMapping("/analyze/by-date")
+	public CommonResponse<FindProjectsResponse> analyzeProjectsByDate(@RequestBody AnalyzeProjectByDateRequest request) {
+		AnalyzeProjectByDateCommand command = AnalyzeProjectByDateCommand.builder()
+				.projectId(request.getProjectId())
+				.unit(request.getUnit())
+				.startDate(request.getStartDate())
+				.endDate(request.getEndDate())
+				.build();
+
+		AnalyzeProjectByDateResult result = analyzeProjectByDate.execute(command);
+
+		AnalyzeProjectByDateResponse response = new AnalyzeProjectByDateResponse(
+			result.dateStatistics().stream().map(p -> AnalyzeProjectByDateResponse.DateStatistics.builder()
+				.date(p.date())
+				.count(p.count())
+				.build()
+			).toList()
+		);
+
+		return CommonResponse.success("Project is analyzed by date", response);
 	}
 }

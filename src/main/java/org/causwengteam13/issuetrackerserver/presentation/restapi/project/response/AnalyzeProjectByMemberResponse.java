@@ -12,7 +12,7 @@ public record AnalyzeProjectByMemberResponse(
 
 	@Builder
 	public record MemberStatistics(
-		String member,
+		String name,
 		List<IssueStatistics> issueStatistics
 	) {
 

@@ -113,7 +113,7 @@ public class ProjectController {
 
 		AnalyzeProjectByMemberResponse response = new AnalyzeProjectByMemberResponse(
 			result.members().stream().map(p -> AnalyzeProjectByMemberResponse.MemberStatistics.builder()
-				.member(p.name())
+				.name(p.name())
 				.issueStatistics(p.issueStatistics().stream().map(i ->
 					AnalyzeProjectByMemberResponse.MemberStatistics.IssueStatistics.builder()
 						.status(i.status())

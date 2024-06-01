@@ -8,4 +8,5 @@ public class FindIssuesRequest {
 	private String assigneeName;
 	private String reporterName;
 	private String status;
+	private String searchAs;
 }

@@ -5,7 +5,7 @@ import static org.causwengteam13.issuetrackerserver.domain.project.entity.QProje
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.causwengteam13.issuetrackerserver.domain.project.command.FindProjectsCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.entity.Project;
 import org.causwengteam13.issuetrackerserver.domain.project.repository.ProjectRepositoryCustom;
@@ -26,12 +26,12 @@ public class ProjectRepositoryImpl implements ProjectRepositoryCustom {
 	@Override
 	public List<Project> findProjects(FindProjectsCommand command) {
 		List<Predicate> predicates = new ArrayList<>();
-		if (ObjectUtils.isNotEmpty(command.title())) {
-			predicates.add(project.title.contains(command.title()));
+		if (StringUtils.isNotBlank(command.title())) {
+			predicates.add(project.title.containsIgnoreCase(command.title()));
 		}
 
-		if (ObjectUtils.isNotEmpty(command.description())) {
-			predicates.add(project.description.contains(command.description()));
+		if (StringUtils.isNotBlank(command.description())) {
+			predicates.add(project.description.containsIgnoreCase(command.description()));
 		}
 
 		return queryFactory.selectFrom(project)

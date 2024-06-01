@@ -81,7 +81,7 @@ public class ProjectController {
 	}
 
 	@Operation(summary = "날짜별 프로젝트 분석")
-	@PostMapping("/analyze/by-date")
+	@PostMapping("/analytics/date")
 	public CommonResponse<AnalyzeProjectByDateResponse> analyzeProjectsByDate(@RequestBody AnalyzeProjectByDateRequest request) {
 		AnalyzeProjectByDateCommand command = AnalyzeProjectByDateCommand.builder()
 				.projectId(request.getProjectId())
@@ -104,7 +104,7 @@ public class ProjectController {
 	}
 
 	@Operation(summary = "멤버별 프로젝트 분석")
-	@PostMapping("/analyze/by-member")
+	@PostMapping("/analytics/member")
 	public CommonResponse<AnalyzeProjectByMemberResponse> analyzeProjectsByMember(@RequestBody
 		AnalyzeProjectByMemberRequest request) {
 		AnalyzeProjectByMemberCommand command = new AnalyzeProjectByMemberCommand(request.getProjectId());

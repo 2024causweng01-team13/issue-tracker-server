@@ -116,7 +116,7 @@ public class ProjectController {
 				.member(p.name())
 				.issueStatistics(p.issueStatistics().stream().map(i ->
 					AnalyzeProjectByMemberResponse.MemberStatistics.IssueStatistics.builder()
-						.status(i	.status().name())
+						.status(i.status())
 						.count(i.count())
 						.build()
 				).toList())

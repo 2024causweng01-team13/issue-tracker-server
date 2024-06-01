@@ -19,7 +19,7 @@ public record AnalyzeProjectByMemberResult(
 		@Builder
 		public record IssueStatistics(
 			IssueStatus status,
-			int count
+			Long count
 		) {
 		}
 	}

@@ -1,5 +1,6 @@
 package org.causwengteam13.issuetrackerserver.infrastructure.querydsl.project;
 
+import static com.querydsl.core.group.GroupBy.*;
 import static org.causwengteam13.issuetrackerserver.domain.issue.entity.QIssue.*;
 
 import java.time.LocalDateTime;
@@ -12,6 +13,8 @@ import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProje
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByDateResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByMemberResult;
 import org.causwengteam13.issuetrackerserver.domain.project.service.AnalyzeProjectService;
+import org.causwengteam13.issuetrackerserver.infrastructure.querydsl.project.dto.AnalyzeProjectByDateQuerydslResult;
+import org.causwengteam13.issuetrackerserver.infrastructure.querydsl.project.dto.AnalyzeProjectByMemberQuerydslResult;
 import org.springframework.stereotype.Service;
 
 import com.querydsl.core.types.ExpressionUtils;
@@ -49,16 +52,23 @@ public class AnalyzeProjectServiceImpl implements AnalyzeProjectService {
 			case MONTH -> Expressions.dateTemplate(LocalDateTime.class, "DATE_FORMAT({0}, {1})", issue.createdAt, "%Y-%m");
 		};
 
-		return new AnalyzeProjectByDateResult(queryFactory.select(
-			Projections.constructor(AnalyzeProjectByDateResult.DateStatistics.class,
-				dateUnit,
-				issue.count().as("count")
-			))
+		List<AnalyzeProjectByDateQuerydslResult.DateStatistics> dateStatistics = queryFactory.select(
+				Projections.constructor(AnalyzeProjectByDateQuerydslResult.DateStatistics.class,
+					dateUnit,
+					issue.count().as("count")
+				))
 			.from(issue)
-			.leftJoin(issue.project).fetchJoin()
 			.where(ExpressionUtils.allOf(predicates))
-			.groupBy(Expressions.stringTemplate("DATE_FORMAT({0}, {1})", issue.createdAt, "%Y-%m"))
-			.fetch());
+			.groupBy(dateUnit)
+			.fetch();
+
+		return new AnalyzeProjectByDateResult(dateStatistics.stream().map(r ->
+			AnalyzeProjectByDateResult.DateStatistics.builder()
+				.date(r.date())
+				.count(r.count())
+				.build()
+			).toList()
+		);
 	}
 
 	@Override
@@ -68,18 +78,30 @@ public class AnalyzeProjectServiceImpl implements AnalyzeProjectService {
 			predicates.add(issue.project.id.eq(command.getProjectId()));
 		}
 
-		return new AnalyzeProjectByMemberResult(queryFactory.select(
-				Projections.constructor(AnalyzeProjectByMemberResult.MemberStatistics.class,
+		List<AnalyzeProjectByMemberQuerydslResult.MemberStatistics> memberStatistics = queryFactory.select(
+				Projections.constructor(AnalyzeProjectByMemberQuerydslResult.MemberStatistics.class,
 					issue.assignee.name,
-					Projections.constructor(AnalyzeProjectByMemberResult.MemberStatistics.IssueStatistics.class,
+					list(Projections.constructor(AnalyzeProjectByMemberQuerydslResult.MemberStatistics.IssueStatistics.class,
 						issue.status,
 						issue.count().as("count")
-					)
+					))
 				))
 			.from(issue)
-			.leftJoin(issue.project).fetchJoin()
 			.where(ExpressionUtils.allOf(predicates))
 			.groupBy(issue.assignee.name, issue.status)
-			.fetch());
+			.fetch();
+
+		return new AnalyzeProjectByMemberResult(memberStatistics.stream().map(r ->
+			AnalyzeProjectByMemberResult.MemberStatistics.builder()
+				.name(r.name())
+				.issueStatistics(r.issueStatistics().stream().map(i ->
+					AnalyzeProjectByMemberResult.MemberStatistics.IssueStatistics.builder()
+						.status(i.status())
+						.count(i.count())
+						.build()
+				).toList())
+				.build()
+			).toList()
+		);
 	}
 }

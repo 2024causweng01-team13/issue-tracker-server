@@ -2,6 +2,8 @@ package org.causwengteam13.issuetrackerserver.presentation.restapi.project.respo
 
 import java.util.List;
 
+import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssueStatus;
+
 import lombok.Builder;
 
 public record AnalyzeProjectByMemberResponse(
@@ -16,8 +18,8 @@ public record AnalyzeProjectByMemberResponse(
 
 		@Builder
 		public record IssueStatistics(
-			String status,
-			Integer count
+			IssueStatus status,
+			Long count
 		) {
 		}
 	}

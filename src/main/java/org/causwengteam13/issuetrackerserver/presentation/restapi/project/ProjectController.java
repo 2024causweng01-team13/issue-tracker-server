@@ -1,19 +1,24 @@
 package org.causwengteam13.issuetrackerserver.presentation.restapi.project;
 
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByDateCommand;
+import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByMemberCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.CreateProjectCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.FindProjectsCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByDateResult;
+import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByMemberResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.CreateProjectResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.FindProjectsResult;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.AnalyzeProjectByDate;
+import org.causwengteam13.issuetrackerserver.domain.project.usecase.AnalyzeProjectByMember;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.CreateProject;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.FindProjects;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.AnalyzeProjectByDateRequest;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.AnalyzeProjectByMemberRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.CreateProjectRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.FindProjectsRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AnalyzeProjectByDateResponse;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AnalyzeProjectByMemberResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.CreateProjectResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.FindProjectsResponse;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +37,7 @@ public class ProjectController {
 	private final CreateProject createProject;
 	private final FindProjects findProjects;
 	private final AnalyzeProjectByDate analyzeProjectByDate;
+	private final AnalyzeProjectByMember analyzeProjectByMember;
 
 	@Operation(summary = "프로젝트 생성")
 	@PostMapping
@@ -76,7 +82,7 @@ public class ProjectController {
 
 	@Operation(summary = "날짜별 프로젝트 분석")
 	@PostMapping("/analyze/by-date")
-	public CommonResponse<FindProjectsResponse> analyzeProjectsByDate(@RequestBody AnalyzeProjectByDateRequest request) {
+	public CommonResponse<AnalyzeProjectByDateResponse> analyzeProjectsByDate(@RequestBody AnalyzeProjectByDateRequest request) {
 		AnalyzeProjectByDateCommand command = AnalyzeProjectByDateCommand.builder()
 				.projectId(request.getProjectId())
 				.unit(request.getUnit())
@@ -95,5 +101,29 @@ public class ProjectController {
 		);
 
 		return CommonResponse.success("Project is analyzed by date", response);
+	}
+
+	@Operation(summary = "멤버별 프로젝트 분석")
+	@PostMapping("/analyze/by-member")
+	public CommonResponse<AnalyzeProjectByMemberResponse> analyzeProjectsByMember(@RequestBody
+		AnalyzeProjectByMemberRequest request) {
+		AnalyzeProjectByMemberCommand command = new AnalyzeProjectByMemberCommand(request.getProjectId());
+
+		AnalyzeProjectByMemberResult result = analyzeProjectByMember.execute(command);
+
+		AnalyzeProjectByMemberResponse response = new AnalyzeProjectByMemberResponse(
+			result.members().stream().map(p -> AnalyzeProjectByMemberResponse.MemberStatistics.builder()
+				.member(p.name())
+				.issueStatistics(p.issueStatistics().stream().map(i ->
+					AnalyzeProjectByMemberResponse.MemberStatistics.IssueStatistics.builder()
+						.status(i	.status().name())
+						.count(i.count())
+						.build()
+				).toList())
+				.build()
+			).toList()
+		);
+
+		return CommonResponse.success("Project is analyzed by member", response);
 	}
 }

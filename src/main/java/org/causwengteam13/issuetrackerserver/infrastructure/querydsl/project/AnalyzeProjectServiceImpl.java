@@ -8,7 +8,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByDateCommand;
+import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByMemberCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByDateResult;
+import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByMemberResult;
 import org.causwengteam13.issuetrackerserver.domain.project.service.AnalyzeProjectService;
 import org.springframework.stereotype.Service;
 
@@ -56,6 +58,28 @@ public class AnalyzeProjectServiceImpl implements AnalyzeProjectService {
 			.leftJoin(issue.project).fetchJoin()
 			.where(ExpressionUtils.allOf(predicates))
 			.groupBy(Expressions.stringTemplate("DATE_FORMAT({0}, {1})", issue.createdAt, "%Y-%m"))
+			.fetch());
+	}
+
+	@Override
+	public AnalyzeProjectByMemberResult analyzeProjectByMember(AnalyzeProjectByMemberCommand command) {
+		List<Predicate> predicates = new ArrayList<>();
+		if (ObjectUtils.isNotEmpty(command.getProjectId())) {
+			predicates.add(issue.project.id.eq(command.getProjectId()));
+		}
+
+		return new AnalyzeProjectByMemberResult(queryFactory.select(
+				Projections.constructor(AnalyzeProjectByMemberResult.MemberStatistics.class,
+					issue.assignee.name,
+					Projections.constructor(AnalyzeProjectByMemberResult.MemberStatistics.IssueStatistics.class,
+						issue.status,
+						issue.count().as("count")
+					)
+				))
+			.from(issue)
+			.leftJoin(issue.project).fetchJoin()
+			.where(ExpressionUtils.allOf(predicates))
+			.groupBy(issue.assignee.name, issue.status)
 			.fetch());
 	}
 }

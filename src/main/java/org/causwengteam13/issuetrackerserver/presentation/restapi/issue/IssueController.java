@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.causwengteam13.issuetrackerserver.domain.issue.command.AssignIssueCommand;
+import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssuesCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssuePriority;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssueStatus;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.AssignIssueResult;
+import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssuesResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.AssignIssue;
+import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FindIssues;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.AssignIssueRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.CreateIssueRequest;
@@ -32,46 +35,36 @@ import lombok.RequiredArgsConstructor;
 public class IssueController {
 
 	private final AssignIssue assignIssue;
+	private final FindIssues findIssues;
 
 	@Operation(summary = "이슈 검색 및 목록 조회")
 	@PostMapping("/find")
 	public CommonResponse<FindIssuesResponse> findIssues(@RequestBody FindIssuesRequest request) {
-		// 미구현: 더미 데이터 반환
-		return CommonResponse.success("Find Issues success", new FindIssuesResponse(List.of(
-			FindIssuesResponse.IssueResponse.builder()
-				.id(123L)
-				.title("title1")
-				.description("description1")
-				.reporterName("reporter1")
-				.assigneeName(null)
-				.fixerName(null)
-				.priority(IssuePriority.BLOCKER)
-				.status(IssueStatus.NEW)
-				.createdAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39))
-				.updatedAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39)).build(),
-			FindIssuesResponse.IssueResponse.builder()
-				.id(456L)
-				.title("title2")
-				.description("description2")
-				.reporterName("reporter2")
-				.assigneeName("assignee2")
-				.fixerName("fixer2")
-				.priority(IssuePriority.CRITICAL)
-				.status(IssueStatus.ASSIGNED)
-				.createdAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39))
-				.updatedAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39)).build(),
-			FindIssuesResponse.IssueResponse.builder()
-				.id(789L)
-				.title("title3")
-				.description("description3")
-				.reporterName("reporter3")
-				.assigneeName("assignee3")
-				.fixerName("fixer3")
-				.priority(IssuePriority.MAJOR)
-				.status(IssueStatus.RESOLVED)
-				.createdAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39))
-				.updatedAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39)).build()
-			)));
+		FindIssuesCommand command = FindIssuesCommand.builder()
+				.projectId(request.getProjectId())
+				.assigneeName(request.getAssigneeName())
+				.reporterName(request.getReporterName())
+				.status(request.getStatus())
+				.searchAs(request.getSearchAs()).build();
+
+		FindIssuesResult result = findIssues.execute(command);
+
+		FindIssuesResponse response = new FindIssuesResponse(
+				result.getIssues().stream().map(issuesResult -> FindIssuesResponse.IssueResponse.builder()
+						.id(issuesResult.getId())
+						.title(issuesResult.getTitle())
+						.description(issuesResult.getDescription())
+						.assigneeName(issuesResult.getAssigneeName())
+						.reporterName(issuesResult.getReporterName())
+						.fixerName(issuesResult.getFixerName())
+						.priority(issuesResult.getPriority())
+						.status(issuesResult.getStatus())
+						.createdAt(issuesResult.getCreatedAt())
+						.updatedAt(issuesResult.getUpdatedAt())
+						.build()).toList()
+		);
+
+		return CommonResponse.success("Find Issues success", response);
 	}
 
 	@Operation(summary = "이슈 상세 조회")

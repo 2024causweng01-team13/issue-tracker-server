@@ -1,6 +1,5 @@
 package org.causwengteam13.issuetrackerserver.presentation.restapi.issue;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,24 +8,27 @@ import org.causwengteam13.issuetrackerserver.domain.issue.command.AssignIssueCom
 import org.causwengteam13.issuetrackerserver.domain.issue.command.CreateIssueCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssueByIdCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssuesCommand;
-import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssuePriority;
-import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssueStatus;
+import org.causwengteam13.issuetrackerserver.domain.issue.command.FixIssueCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.AssignIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.CreateIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssueByIdResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssuesResult;
+import org.causwengteam13.issuetrackerserver.domain.issue.result.FixIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.AssignIssue;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.CreateIssue;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FindIssueById;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FindIssues;
+import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FixIssue;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.AssignIssueRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.CreateIssueRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.FindIssuesRequest;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.FixIssueRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.AssignIssueResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.CreateIssueResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FindIssueByIdResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FindIssuesResponse;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FixIssueResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,6 +48,7 @@ public class IssueController {
 	private final FindIssues findIssues;
 	private final CreateIssue createIssue;
 	private final FindIssueById findIssueById;
+	private final FixIssue fixIssue;
 
 	@Operation(summary = "이슈 검색 및 목록 조회")
 	@PostMapping("/find")
@@ -115,7 +118,7 @@ public class IssueController {
 				.build();
 
 		return CommonResponse.success("Find issue success", response);
-  }
+  	}
 
 	@Operation(summary = "이슈 생성")
 	@PostMapping
@@ -172,4 +175,29 @@ public class IssueController {
 
 		return CommonResponse.success("Assign Issue success", response);
 	}
+
+	@Operation(summary = "이슈 해결")
+	@PostMapping("/{issueId}/fix")
+	public CommonResponse<FixIssueResponse> fixIssue(
+		@PathVariable(value = "issueId") Long issueId,
+		@RequestBody FixIssueRequest request
+	) {
+		FixIssueCommand command = FixIssueCommand.builder()
+			.issueId(issueId)
+			.fixerId(request.getFixerId())
+			.comment(request.getComment())
+			.build();
+
+		FixIssueResult result = fixIssue.execute(command);
+
+		FixIssueResponse response = FixIssueResponse.builder()
+			.issueId(result.issueId())
+			.fixerName(result.fixerName())
+			.status(result.status())
+			.updatedAt(result.updatedAt())
+			.build();
+
+		return CommonResponse.success("Fix Issue success", response);
+	}
+
 }

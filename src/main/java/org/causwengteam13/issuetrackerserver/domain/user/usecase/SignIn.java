@@ -24,7 +24,7 @@ public class SignIn {
 
 	public SignInResult execute(SignInCommand command) {
 		User user = userRepository.findByLoginId(command.getLoginId())
-			.orElseThrow(() -> new UserNotFoundProblem(command.getLoginId()));
+			.orElseThrow(() -> UserNotFoundProblem.ofLoginId(command.getLoginId()));
 
 		if (!passwordService.isCorrect(user, command.getPassword())) {
 			throw new PasswordIncorrectProblem();

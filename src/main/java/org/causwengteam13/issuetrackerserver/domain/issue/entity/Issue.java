@@ -102,7 +102,6 @@ public class Issue extends AbstractEntity {
 				.build();
 	}
 
-
 	public Comment addComment(User author, String content) {
 		if (!project.isAuthorized(author)) {
 			throw new UserUnauthorizedInProjectProblem(author.getId());
@@ -119,7 +118,7 @@ public class Issue extends AbstractEntity {
 		return comment;
 	}
 
-	public void assign(User assigner, User assignee) {
+	public void assign(User assigner, User assignee, String comment) {
 		if (!project.isAuthorized(assigner)) {
 			throw new UserUnauthorizedInProjectProblem(assigner.getId());
 		}
@@ -130,7 +129,17 @@ public class Issue extends AbstractEntity {
 
 		this.assignee = assignee;
 		this.status = IssueStatus.ASSIGNED;
-		addComment(assigner, String.format("Assigned to %s", assignee.getName()));
+		addComment(assigner, String.format("Assigned to %s\n%s", assignee.getName(), comment));
+	}
+
+	public void fix(User fixer, String comment) {
+		if (!project.isAuthorized(fixer)) {
+			throw new UserUnauthorizedInProjectProblem(fixer.getId());
+		}
+
+		this.fixer = fixer;
+		this.status = IssueStatus.RESOLVED;
+		addComment(fixer, String.format("Fixed by %s\n%s", fixer.getName(), comment));
 	}
 
 	@Override

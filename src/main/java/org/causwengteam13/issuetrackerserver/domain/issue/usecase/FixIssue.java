@@ -1,10 +1,10 @@
 package org.causwengteam13.issuetrackerserver.domain.issue.usecase;
 
-import org.causwengteam13.issuetrackerserver.domain.issue.command.AssignIssueCommand;
+import org.causwengteam13.issuetrackerserver.domain.issue.command.FixIssueCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.Issue;
 import org.causwengteam13.issuetrackerserver.domain.issue.problem.IssueNotFoundProblem;
 import org.causwengteam13.issuetrackerserver.domain.issue.repository.IssueRepository;
-import org.causwengteam13.issuetrackerserver.domain.issue.result.AssignIssueResult;
+import org.causwengteam13.issuetrackerserver.domain.issue.result.FixIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.user.entity.User;
 import org.causwengteam13.issuetrackerserver.domain.user.problem.UserNotFoundProblem;
 import org.causwengteam13.issuetrackerserver.domain.user.repository.UserRepository;
@@ -16,25 +16,22 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AssignIssue {
+public class FixIssue {
 
 	private final IssueRepository issueRepository;
 	private final UserRepository userRepository;
 
-	public AssignIssueResult execute(AssignIssueCommand command) {
+	public FixIssueResult execute(FixIssueCommand command) {
 		Issue issue = issueRepository.findById(command.getIssueId())
 			.orElseThrow(() -> new IssueNotFoundProblem(command.getIssueId()));
-		User assigner = userRepository.findById(command.getAssignerId())
-			.orElseThrow(() -> new UserNotFoundProblem(command.getAssignerId()));
-		User assignee = userRepository.findById(command.getAssigneeId())
-			.orElseThrow(() -> new UserNotFoundProblem(command.getAssigneeId()));
+		User fixer = userRepository.findById(command.getFixerId())
+			.orElseThrow(() -> new UserNotFoundProblem(command.getFixerId()));
 
-		issue.assign(assigner, assignee, command.getComment());
+		issue.fix(fixer, command.getComment());
 
-		return AssignIssueResult.builder()
+		return FixIssueResult.builder()
 			.issueId(issue.getId())
-			.assignerName(assigner.getName())
-			.assigneeName(issue.getAssignee().getName())
+			.fixerName(issue.getFixer().getName())
 			.status(issue.getStatus())
 			.updatedAt(issue.getUpdatedAt())
 			.build();

@@ -48,6 +48,7 @@ public class IssueTest {
 	@DisplayName("이슈 할당 테스트")
 	class assignTest {
 
+		private static final String comment = "assign";
 		private final User manager = User.builder().id(1L).loginId("u1").name("manager").password("password").build();
 		private Project project;
 		private Issue issue;
@@ -69,7 +70,7 @@ public class IssueTest {
 			User assigner = User.builder().id(3L).loginId("u3").name("assigner").password("pwd").build();
 			User assignee = User.builder().id(4L).loginId("u4").name("assignee").password("pwd").build();
 
-			assertThatThrownBy(() -> issue.assign(assigner, assignee))
+			assertThatThrownBy(() -> issue.assign(assigner, assignee, comment))
 				.isInstanceOf(UserUnauthorizedInProjectProblem.class);
 		}
 
@@ -81,7 +82,7 @@ public class IssueTest {
 
 			project.addMember(assigner);
 
-			assertThatThrownBy(() -> issue.assign(assigner, assignee))
+			assertThatThrownBy(() -> issue.assign(assigner, assignee, comment))
 				.isInstanceOf(UserUnauthorizedInProjectProblem.class);
 		}
 
@@ -94,10 +95,55 @@ public class IssueTest {
 			project.addMember(assigner);
 			project.addMember(assignee);
 
-			assertDoesNotThrow(() -> issue.assign(assigner, assignee));
+			assertDoesNotThrow(() -> issue.assign(assigner, assignee, comment));
 			assertEquals(4L, issue.getAssignee().getId());
 			assertThat(issue.getComments()).hasSize(1);
 			assertThat(issue.getComments().get(0).getAuthor()).isEqualTo(assigner);
+			assertThat(issue.getComments().get(0).getContent()).contains(comment);
+		}
+	}
+
+	@Nested
+	@DisplayName("이슈 버그 해결 테스트")
+	class FixTest {
+
+		private static final String comment = "fix";
+		private final User manager = User.builder().id(1L).loginId("u1").name("manager").password("password").build();
+		private Project project;
+		private Issue issue;
+
+		@BeforeEach
+		void setUp() {
+			project = Project.builder().title("title").manager(manager).build();
+			issue = Issue.builder()
+				.title("title")
+				.description("description")
+				.project(project)
+				.reporter(User.builder().id(2L).loginId("u2").name("reporter").password("pwd").build())
+				.build();
+		}
+
+		@Test
+		@DisplayName("버그를 해결하는 사람이 이슈를 포함하는 프로젝트의 멤버가 아니면 이슈를 해결할 수 없다.")
+		void fail() {
+			User fixer = User.builder().id(3L).loginId("u3").name("fixer").password("pwd").build();
+
+			assertThatThrownBy(() -> issue.fix(fixer, comment))
+				.isInstanceOf(UserUnauthorizedInProjectProblem.class);
+		}
+
+		@Test
+		@DisplayName("버그를 해결하는 사람이 이슈를 포함하는 프로젝트의 멤버면 이슈를 해결할 수 있다.")
+		void success() {
+			User fixer = User.builder().id(5L).loginId("u2").name("fixer").password("password").build();
+
+			project.addMember(fixer);
+			assertDoesNotThrow(() -> issue.fix(fixer, comment));
+
+			assertEquals(5L, issue.getFixer().getId());
+			assertThat(issue.getComments()).hasSize(1);
+			assertThat(issue.getComments().get(0).getAuthor()).isEqualTo(fixer);
+			assertThat(issue.getComments().get(0).getContent()).contains(comment);
 		}
 	}
 }

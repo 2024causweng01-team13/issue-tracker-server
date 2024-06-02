@@ -7,24 +7,20 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-public class AssignIssueCommand extends SelfValidator<AssignIssueCommand> {
+public class FixIssueCommand extends SelfValidator<FixIssueCommand> {
 
 	@NotNull
 	private final Long issueId;
 
 	@NotNull
-	private final Long assignerId;
-
-	@NotNull
-	private final Long assigneeId;
+	private final Long fixerId;
 
 	private final String comment;
 
 	@Builder
-	public AssignIssueCommand(Long issueId, Long assignerId, Long assigneeId, String comment) {
+	public FixIssueCommand(Long issueId, Long fixerId, String comment) {
 		this.issueId = issueId;
-		this.assignerId = assignerId;
-		this.assigneeId = assigneeId;
+		this.fixerId = fixerId;
 		this.comment = comment;
 
 		this.validateAndIfViolatedThrows();

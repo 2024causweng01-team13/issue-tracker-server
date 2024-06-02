@@ -61,6 +61,10 @@ public class User extends AbstractEntity {
 		this.password = password;
 	}
 
+	public boolean isAdmin() {
+		return loginId.equals("admin");
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o)

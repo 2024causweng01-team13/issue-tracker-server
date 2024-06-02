@@ -1,10 +1,11 @@
 package org.causwengteam13.issuetrackerserver.domain.issue.command;
 
+import org.causwengteam13.issuetrackerserver.common.SelfValidator;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
-import org.causwengteam13.issuetrackerserver.common.SelfValidator;
 
 @Getter
 

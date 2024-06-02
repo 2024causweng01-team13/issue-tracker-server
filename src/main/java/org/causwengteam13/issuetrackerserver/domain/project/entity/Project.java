@@ -82,7 +82,8 @@ public class Project extends AbstractEntity {
 	}
 
 	public Boolean isAuthorized(User user) {
-		return manager.equals(user) ||
+		return user.isAdmin() ||
+			manager.equals(user) ||
 			memberships.stream().anyMatch(membership -> membership.getMember().equals(user));
 	}
 

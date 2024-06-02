@@ -6,9 +6,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.causwengteam13.issuetrackerserver.common.AbstractEntity;
-import org.causwengteam13.issuetrackerserver.domain.project.entity.Project;
 import org.causwengteam13.issuetrackerserver.domain.project.entity.ProjectMembership;
-import org.causwengteam13.issuetrackerserver.infrastructure.querydsl.project.dto.request.auth.SignUpRequestDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -31,21 +29,36 @@ import lombok.NoArgsConstructor;
 public class User extends AbstractEntity {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	private String password;
+
+	private String loginId;
+
 	private String name;
+
+	private String password;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
 	private List<ProjectMembership> memberships = new ArrayList<>();
 
 	@Builder
-	private User(Long id, String name) {
+	private User(Long id, String loginId, String name, String password) {
+		if (StringUtils.isBlank(loginId)) {
+			throw new IllegalArgumentException("User loginId must not be blank");
+		}
+
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("User title must not be blank");
 		}
 
+		if (StringUtils.isBlank(password)) {
+			throw new IllegalArgumentException("User password must not be blank");
+		}
+
 		this.id = id;
+		this.loginId = loginId;
 		this.name = name;
+		this.password = password;
 	}
 
 	@Override
@@ -62,10 +75,4 @@ public class User extends AbstractEntity {
 	public int hashCode() {
 		return Objects.hashCode(id);
 	}
-
-	public User(SignUpRequestDto dto) {
-        this.id = dto.getId();
-        this.password = dto.getPassword();
-        this.name = dto.getName();
-    }
 }

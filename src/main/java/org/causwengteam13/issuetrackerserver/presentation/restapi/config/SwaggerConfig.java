@@ -1,4 +1,4 @@
-package org.causwengteam13.issuetrackerserver.presentation.restapi;
+package org.causwengteam13.issuetrackerserver.presentation.restapi.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,7 +7,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 
 @Configuration
-public class SwaggerConfiguration {
+public class SwaggerConfig {
 
 	@Bean
 	public OpenAPI customOpenAPI() {

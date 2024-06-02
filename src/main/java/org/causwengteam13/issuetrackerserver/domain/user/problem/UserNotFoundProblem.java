@@ -7,4 +7,8 @@ public class UserNotFoundProblem extends Problem {
 	public UserNotFoundProblem(Long id) {
 		super(ProblemCategory.NOT_FOUND, "user/not-found", "User not found. ID: " + id, null);
 	}
+
+	public UserNotFoundProblem(String loginId) {
+		super(ProblemCategory.NOT_FOUND, "user/not-found", "User not found. loginID: " + loginId, null);
+	}
 }

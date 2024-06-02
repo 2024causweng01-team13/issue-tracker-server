@@ -1,10 +1,9 @@
-package org.causwengteam13.issuetrackerserver.config;
+package org.causwengteam13.issuetrackerserver.presentation.restapi.config;
 
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-@Configurable
+// @Configurable
 public class CorsConfig implements WebMvcConfigurer{
     
     @Override

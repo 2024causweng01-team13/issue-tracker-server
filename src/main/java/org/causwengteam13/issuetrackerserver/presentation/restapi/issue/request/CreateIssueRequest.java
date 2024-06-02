@@ -7,4 +7,5 @@ public class CreateIssueRequest {
 	private String title;
 	private String description;
 	private Long projectId;
+	private Long reporterId;
 }

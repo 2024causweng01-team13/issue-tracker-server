@@ -14,7 +14,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://issuetracker.cruq8smmaoi9.ap-northeast-2.rds.amazonaws.com:3306/issuetracker
+    url: jdbc:mysql://issuetracker.cruq8smmaoi9.ap-northeast-2.rds.amazonaws.com:3306/issuetracker?serverTimezone=UTC&characterEncoding=UTF-8
     username: admin
     password: team1313
   h2:

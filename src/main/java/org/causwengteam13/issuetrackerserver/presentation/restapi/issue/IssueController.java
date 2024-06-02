@@ -6,26 +6,31 @@ import java.util.List;
 import org.causwengteam13.issuetrackerserver.domain.comment.entity.Comment;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.AssignIssueCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.CreateIssueCommand;
+import org.causwengteam13.issuetrackerserver.domain.issue.command.EditIssueCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssueByIdCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssuesCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FixIssueCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.AssignIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.CreateIssueResult;
+import org.causwengteam13.issuetrackerserver.domain.issue.result.EditIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssueByIdResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssuesResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FixIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.AssignIssue;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.CreateIssue;
+import org.causwengteam13.issuetrackerserver.domain.issue.usecase.EditIssue;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FindIssueById;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FindIssues;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FixIssue;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.AssignIssueRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.CreateIssueRequest;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.EditIssueRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.FindIssuesRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.FixIssueRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.AssignIssueResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.CreateIssueResponse;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.EditIssueResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FindIssueByIdResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FindIssuesResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FixIssueResponse;
@@ -49,6 +54,7 @@ public class IssueController {
 	private final CreateIssue createIssue;
 	private final FindIssueById findIssueById;
 	private final FixIssue fixIssue;
+	private final EditIssue editIssue;
 
 	@Operation(summary = "이슈 검색 및 목록 조회")
 	@PostMapping("/find")
@@ -200,4 +206,25 @@ public class IssueController {
 		return CommonResponse.success("Fix Issue success", response);
 	}
 
+	@Operation(summary = "이슈 수정")
+	@PostMapping("/{issueId}")
+	public CommonResponse<EditIssueResponse> editIssue(
+		@PathVariable(value = "issueId") Long issueId,
+		@RequestBody EditIssueRequest request
+	) {
+		EditIssueCommand command = EditIssueCommand.builder()
+				.issueId(issueId)
+				.editorId(request.getEditorId())
+				.title(request.getTitle())
+				.description(request.getDescription())
+				.priority(request.getPriority())
+				.status(request.getStatus())
+				.build();
+
+		EditIssueResult result = editIssue.execute(command);
+
+		EditIssueResponse response = new EditIssueResponse(result.issueId());
+
+		return CommonResponse.success("Edit Issue success", response);
+	}
 }

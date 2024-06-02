@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.causwengteam13.issuetrackerserver.common.AbstractEntity;
 import org.causwengteam13.issuetrackerserver.domain.comment.entity.Comment;
@@ -140,6 +141,17 @@ public class Issue extends AbstractEntity {
 		this.fixer = fixer;
 		this.status = IssueStatus.RESOLVED;
 		addComment(fixer, String.format("Fixed by %s\n%s", fixer.getName(), comment));
+	}
+
+	public void edit(User editor, String title, String description, IssuePriority priority, IssueStatus status) {
+		if (!project.isAuthorized(editor)) {
+			throw new UserUnauthorizedInProjectProblem(editor.getId());
+		}
+
+		this.title = ObjectUtils.defaultIfNull(title, this.title);
+		this.description = ObjectUtils.defaultIfNull(description, this.description);
+		this.priority = ObjectUtils.defaultIfNull(priority, this.priority);
+		this.status = ObjectUtils.defaultIfNull(status, this.status);
 	}
 
 	@Override

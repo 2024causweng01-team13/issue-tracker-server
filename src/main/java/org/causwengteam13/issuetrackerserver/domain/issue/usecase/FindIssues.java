@@ -1,20 +1,18 @@
 package org.causwengteam13.issuetrackerserver.domain.issue.usecase;
 
-import lombok.RequiredArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssuesCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.Issue;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssueStatus;
 import org.causwengteam13.issuetrackerserver.domain.issue.repository.IssueRepository;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssuesResult;
-import org.causwengteam13.issuetrackerserver.domain.user.entity.User;
 import org.causwengteam13.issuetrackerserver.domain.user.repository.UserRepository;
-import org.h2.command.Command;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional

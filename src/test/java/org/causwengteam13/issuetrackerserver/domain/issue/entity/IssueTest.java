@@ -104,7 +104,7 @@ public class IssueTest {
 	}
 
 	@Nested
-	@DisplayName("이슈 버그 해결 테스트")
+	@DisplayName("이슈 해결 테스트")
 	class FixTest {
 
 		private static final String comment = "fix";
@@ -144,6 +144,54 @@ public class IssueTest {
 			assertThat(issue.getComments()).hasSize(1);
 			assertThat(issue.getComments().get(0).getAuthor()).isEqualTo(fixer);
 			assertThat(issue.getComments().get(0).getContent()).contains(comment);
+		}
+	}
+
+	@Nested
+	@DisplayName("이슈 수정 테스트")
+	class EditTest {
+
+		private final String titleToChange = "changed title";
+		private final String descriptionToChange = "changed description";
+		private final IssuePriority priorityToChange = IssuePriority.BLOCKER;
+		private final IssueStatus statusToChange = IssueStatus.ASSIGNED;
+
+		private final User manager = User.builder().id(1L).loginId("u1").name("manager").password("password").build();
+		private Project project;
+		private Issue issue;
+
+		@BeforeEach
+		void setUp() {
+			project = Project.builder().title("title").manager(manager).build();
+			issue = Issue.builder()
+				.title("title")
+				.description("description")
+				.project(project)
+				.reporter(User.builder().id(2L).loginId("u2").name("reporter").password("pwd").build())
+				.build();
+		}
+
+		@Test
+		@DisplayName("이슈를 수정하는 사람이 이슈를 포함하는 프로젝트의 멤버가 아니면 이슈를 수정할 수 없다.")
+		void fail() {
+			User editor = User.builder().id(3L).loginId("u3").name("editor").password("pwd").build();
+
+			assertThatThrownBy(() -> issue.edit(editor, titleToChange, descriptionToChange, priorityToChange, statusToChange))
+				.isInstanceOf(UserUnauthorizedInProjectProblem.class);
+		}
+
+		@Test
+		@DisplayName("이슈를 수정하는 사람이 이슈를 포함하는 프로젝트의 멤버면 이슈를 수정할 수 있다.")
+		void success() {
+			User editor = User.builder().id(3L).loginId("u3").name("editor").password("pwd").build();
+
+			project.addMember(editor);
+			assertDoesNotThrow(() -> issue.edit(editor, titleToChange, descriptionToChange, priorityToChange, statusToChange));
+
+			assertEquals(titleToChange, issue.getTitle());
+			assertEquals(descriptionToChange, issue.getDescription());
+			assertEquals(priorityToChange, issue.getPriority());
+			assertEquals(statusToChange, issue.getStatus());
 		}
 	}
 }

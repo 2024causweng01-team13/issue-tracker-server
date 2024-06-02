@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: issue-tracker-server
+  jpa:
+    show-sql: true
+    database-platform: mysql
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.MySQLDialect
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://issuetracker.cruq8smmaoi9.ap-northeast-2.rds.amazonaws.com:3306/issuetracker
+    username: admin
+    password: team1313
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+  sql:
+    init:
+      platform: h2
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 110MB
+
+server:
+  port: 8080

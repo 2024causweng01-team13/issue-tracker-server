@@ -9,8 +9,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.Claims;
 
-
-
 @Component
 public class JwtProvider {
 

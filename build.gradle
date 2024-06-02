@@ -75,7 +75,6 @@ jib {
 	}
 	container {
 		jvmFlags = [
-				"-Dspring.profiles.active=prod",
 				"-Dspring.datasource.url=${System.getProperty('SPRING_DATASOURCE_URL')}",
 				"-Dspring.datasource.username=${System.getProperty('SPRING_DATASOURCE_USERNAME')}",
 				"-Dspring.datasource.password=${System.getProperty('SPRING_DATASOURCE_PASSWORD')}"

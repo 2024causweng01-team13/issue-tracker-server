@@ -1,6 +1,5 @@
 package org.causwengteam13.issuetrackerserver.domain.project.result;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Builder;
@@ -11,7 +10,7 @@ public record AnalyzeProjectByDateResult(
 
 	@Builder
 	public record DateStatistics(
-		LocalDateTime date,
+		String date,
 		Long count
 	) {
 	}

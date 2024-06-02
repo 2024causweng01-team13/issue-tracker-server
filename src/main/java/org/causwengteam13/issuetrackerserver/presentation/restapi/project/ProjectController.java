@@ -3,14 +3,17 @@ package org.causwengteam13.issuetrackerserver.presentation.restapi.project;
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByDateCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByMemberCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.CreateProjectCommand;
+import org.causwengteam13.issuetrackerserver.domain.project.command.FindProjectByIdCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.FindProjectsCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByDateResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByMemberResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.CreateProjectResult;
+import org.causwengteam13.issuetrackerserver.domain.project.result.FindProjectByIdResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.FindProjectsResult;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.AnalyzeProjectByDate;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.AnalyzeProjectByMember;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.CreateProject;
+import org.causwengteam13.issuetrackerserver.domain.project.usecase.FindProjectById;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.FindProjects;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.AnalyzeProjectByDateRequest;
@@ -20,7 +23,10 @@ import org.causwengteam13.issuetrackerserver.presentation.restapi.project.reques
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AnalyzeProjectByDateResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AnalyzeProjectByMemberResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.CreateProjectResponse;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.FindProjectByIdResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.FindProjectsResponse;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,6 +41,7 @@ import lombok.RequiredArgsConstructor;
 public class ProjectController {
 
 	private final CreateProject createProject;
+	private final FindProjectById findProjectById;
 	private final FindProjects findProjects;
 	private final AnalyzeProjectByDate analyzeProjectByDate;
 	private final AnalyzeProjectByMember analyzeProjectByMember;
@@ -53,6 +60,26 @@ public class ProjectController {
 		CreateProjectResponse response = new CreateProjectResponse(result.projectId());
 
 		return CommonResponse.success("Project created", response);
+	}
+
+	@Operation(summary = "프로젝트 조회")
+	@GetMapping("/{projectId}")
+	public CommonResponse<FindProjectByIdResponse> findProjectById(@PathVariable(value = "projectId") Long projectId) {
+		FindProjectByIdCommand command = new FindProjectByIdCommand(projectId);
+
+		FindProjectByIdResult result = findProjectById.execute(command);
+
+		FindProjectByIdResponse response = FindProjectByIdResponse.builder()
+			.id(result.id())
+			.title(result.title())
+			.description(result.description())
+			.managerName(result.managerName())
+			.status(result.status())
+			.createdAt(result.createdAt())
+			.updatedAt(result.updatedAt())
+			.build();
+
+		return CommonResponse.success("Project found", response);
 	}
 
 	@Operation(summary = "프로젝트 검색 및 목록 조회")

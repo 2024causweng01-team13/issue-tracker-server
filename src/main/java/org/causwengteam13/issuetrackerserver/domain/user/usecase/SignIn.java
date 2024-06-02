@@ -30,7 +30,7 @@ public class SignIn {
 			throw new PasswordIncorrectProblem();
 		}
 
-		String token = tokenService.createIdToken(user.getId());
+		String token = tokenService.createIdToken(user);
 
 		return new SignInResult(token);
 	}

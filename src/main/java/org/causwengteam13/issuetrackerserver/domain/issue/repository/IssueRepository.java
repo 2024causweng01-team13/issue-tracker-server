@@ -15,5 +15,5 @@ public interface IssueRepository extends JpaRepository<Issue, Long> {
     @Query("SELECT i FROM Issue i WHERE i.reporter.name = :name")
     List<Issue> findByReporterName(@Param("name") String name);
     @Query("SELECT i FROM Issue i WHERE i.status = :status")
-    List<Issue> findByStatus(@Param("status") String status);
+    List<Issue> findByStatus(@Param("status") IssueStatus status);
 }

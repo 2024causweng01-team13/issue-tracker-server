@@ -3,6 +3,7 @@ package org.causwengteam13.issuetrackerserver.domain.issue.usecase;
 import lombok.RequiredArgsConstructor;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssuesCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.Issue;
+import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssueStatus;
 import org.causwengteam13.issuetrackerserver.domain.issue.repository.IssueRepository;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssuesResult;
 import org.causwengteam13.issuetrackerserver.domain.user.entity.User;
@@ -43,7 +44,7 @@ public class FindIssues {
 
         } else {
             //STATUS
-            issues = issueRepository.findByStatus(command.status());
+            issues = issueRepository.findByStatus(IssueStatus.valueOf(command.status()));
             return new FindIssuesResult(issues);
         }
     }

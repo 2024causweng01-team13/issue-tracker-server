@@ -6,6 +6,7 @@ import static org.causwengteam13.issuetrackerserver.domain.issue.entity.QIssue.*
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByDateCommand;
@@ -67,7 +68,7 @@ public class AnalyzeProjectServiceImpl implements AnalyzeProjectService {
 				.date(r.date())
 				.count(r.count())
 				.build()
-		).toList()
+			).toList()
 		);
 	}
 
@@ -78,30 +79,35 @@ public class AnalyzeProjectServiceImpl implements AnalyzeProjectService {
 			predicates.add(issue.project.id.eq(command.getProjectId()));
 		}
 
-		List<AnalyzeProjectByMemberQuerydslResult.MemberStatistics> memberStatistics = queryFactory.select(
+		Map<String, List<AnalyzeProjectByMemberQuerydslResult.MemberStatistics.IssueStatistics>> result = queryFactory.select(
 				Projections.constructor(AnalyzeProjectByMemberQuerydslResult.MemberStatistics.class,
 					issue.assignee.name,
-					list(Projections.constructor(AnalyzeProjectByMemberQuerydslResult.MemberStatistics.IssueStatistics.class,
-						issue.status,
-						issue.count().as("count")
-					))
+					list(
+						Projections.constructor(AnalyzeProjectByMemberQuerydslResult.MemberStatistics.IssueStatistics.class,
+							issue.status,
+							issue.count().as("count")
+						))
 				))
 			.from(issue)
 			.where(ExpressionUtils.allOf(predicates))
 			.groupBy(issue.assignee.name, issue.status)
-			.fetch();
+			.transform(groupBy(issue.assignee.name).as(list(
+				Projections.constructor(AnalyzeProjectByMemberQuerydslResult.MemberStatistics.IssueStatistics.class,
+					issue.status,
+					issue.count().as("count")
+				))));
 
-		return new AnalyzeProjectByMemberResult(memberStatistics.stream().map(r ->
+		return new AnalyzeProjectByMemberResult(result.entrySet().stream().map(e ->
 			AnalyzeProjectByMemberResult.MemberStatistics.builder()
-				.name(r.name())
-				.issueStatistics(r.issueStatistics().stream().map(i ->
+				.name(e.getKey())
+				.issueStatistics(e.getValue().stream().map(i ->
 					AnalyzeProjectByMemberResult.MemberStatistics.IssueStatistics.builder()
 						.status(i.status())
 						.count(i.count())
 						.build()
 				).toList())
 				.build()
-		).toList()
+			).toList()
 		);
 	}
 }

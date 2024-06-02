@@ -26,7 +26,6 @@ public class CreateIssueResult {
         this.id = issue.getId();
         this.title = issue.getTitle();
         this.description = issue.getDescription();
-<<<<<<< HEAD
         if(issue.getReporter() == null) {
             this.reporterName = null;
         } else {
@@ -42,11 +41,6 @@ public class CreateIssueResult {
         } else {
             this.fixerName = issue.getFixer().getName();
         }
-=======
-        this.reporterName = issue.getReporter().getName();
-        this.assigneeName = issue.getAssignee().getName();
-        this.fixerName = issue.getFixer().getName();
->>>>>>> origin/issues
         this.priority = issue.getPriority();
         this.status = issue.getStatus();
         this.createdAt = issue.getCreatedAt();

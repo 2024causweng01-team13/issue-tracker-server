@@ -28,10 +28,10 @@ import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FindIssueByIdResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.response.FindIssuesResponse;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -78,8 +78,8 @@ public class IssueController {
 	}
 
 	@Operation(summary = "이슈 상세 조회")
-	@GetMapping("/:issueId")
-	public CommonResponse<FindIssueByIdResponse> findIssueById(@RequestParam(value = "issueId") Long issueId) {
+	@GetMapping("/{issueId}")
+	public CommonResponse<FindIssueByIdResponse> findIssueById(@PathVariable(value = "issueId") Long issueId) {
 
 		FindIssueByIdCommand command = FindIssueByIdCommand.builder()
 				.issueId(issueId)
@@ -115,7 +115,7 @@ public class IssueController {
 				.build();
 
 		return CommonResponse.success("Find issue success", response);
-	}
+  }
 
 	@Operation(summary = "이슈 생성")
 	@PostMapping
@@ -148,9 +148,9 @@ public class IssueController {
 	}
 
 	@Operation(summary = "이슈 할당")
-	@PostMapping("/:issueId/assign")
+	@PostMapping("/{issueId}/assign")
 	public CommonResponse<AssignIssueResponse> assignIssue(
-		@RequestParam(value = "issueId") Long issueId,
+		@PathVariable(value = "issueId") Long issueId,
 		@RequestBody AssignIssueRequest request
 	) {
 		AssignIssueCommand command = AssignIssueCommand.builder()

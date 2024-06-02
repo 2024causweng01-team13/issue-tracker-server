@@ -4,12 +4,15 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.causwengteam13.issuetrackerserver.domain.issue.command.AssignIssueCommand;
+import org.causwengteam13.issuetrackerserver.domain.issue.command.CreateIssueCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.command.FindIssuesCommand;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssuePriority;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.IssueStatus;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.AssignIssueResult;
+import org.causwengteam13.issuetrackerserver.domain.issue.result.CreateIssueResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.result.FindIssuesResult;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.AssignIssue;
+import org.causwengteam13.issuetrackerserver.domain.issue.usecase.CreateIssue;
 import org.causwengteam13.issuetrackerserver.domain.issue.usecase.FindIssues;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.issue.request.AssignIssueRequest;
@@ -36,6 +39,7 @@ public class IssueController {
 
 	private final AssignIssue assignIssue;
 	private final FindIssues findIssues;
+	private final CreateIssue createIssue;
 
 	@Operation(summary = "이슈 검색 및 목록 조회")
 	@PostMapping("/find")
@@ -111,19 +115,31 @@ public class IssueController {
 	@Operation(summary = "이슈 생성")
 	@PostMapping
 	public CommonResponse<CreateIssueResponse> createIssue(@RequestBody CreateIssueRequest request) {
-		// 미구현: 더미 데이터 반환
-		return CommonResponse.success("Create Issue success", CreateIssueResponse.builder()
-			.id(123L)
-			.title(request.getTitle())
-			.description(request.getDescription())
-			.reporterName("reporter")
-			.assigneeName(null)
-			.fixerName(null)
-			.priority(IssuePriority.BLOCKER)
-			.status(IssueStatus.NEW)
-			.createdAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39))
-			.updatedAt(LocalDateTime.of(2024, 5, 29, 17, 22, 39))
-			.build());
+
+		CreateIssueCommand command = CreateIssueCommand.builder()
+				.title(request.getTitle())
+				.description(request.getDescription())
+				.projectId(request.getProjectId())
+				.reporterId(request.getReporterId())
+				.build();
+
+
+		CreateIssueResult result = createIssue.execute(command);
+
+		CreateIssueResponse response = CreateIssueResponse.builder()
+				.id(result.getId())
+				.title(result.getTitle())
+				.description(result.getDescription())
+				.reporterName(result.getReporterName())
+				.assigneeName(result.getAssigneeName())
+				.fixerName(result.getFixerName())
+				.priority(result.getPriority())
+				.status(result.getStatus())
+				.createdAt(result.getCreatedAt())
+				.updatedAt(result.getUpdatedAt())
+				.build();
+
+		return CommonResponse.success("Create Issue success", response);
 	}
 
 	@Operation(summary = "이슈 할당")

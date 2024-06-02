@@ -92,6 +92,17 @@ public class Issue extends AbstractEntity {
 		this.status = assignee == null ? IssueStatus.NEW : IssueStatus.ASSIGNED;
 	}
 
+
+	public static Issue of(User reporter, String title, String description,  Project project) {
+		return Issue.builder()
+				.reporter(reporter)
+				.title(title)
+				.description(description)
+				.project(project)
+				.build();
+	}
+
+
 	public Comment addComment(User author, String content) {
 		if (!project.isAuthorized(author)) {
 			throw new UserUnauthorizedInProjectProblem(author.getId());

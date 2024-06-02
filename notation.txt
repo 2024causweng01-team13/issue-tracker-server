@@ -1,0 +1,1 @@
+resouce에 있는 파일 application.properties로 수정하여 jdbc연결

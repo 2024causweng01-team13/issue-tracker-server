@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.causwengteam13.issuetrackerserver.common.AbstractEntity;
 import org.causwengteam13.issuetrackerserver.domain.project.entity.Project;
 import org.causwengteam13.issuetrackerserver.domain.project.entity.ProjectMembership;
+import org.causwengteam13.issuetrackerserver.infrastructure.querydsl.project.dto.request.auth.SignUpRequestDto;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -17,20 +18,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name="users")
 @Table(name = "users")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class User extends AbstractEntity {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	private String password;
 	private String name;
 
 	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -60,4 +62,10 @@ public class User extends AbstractEntity {
 	public int hashCode() {
 		return Objects.hashCode(id);
 	}
+
+	public User(SignUpRequestDto dto) {
+        this.id = dto.getId();
+        this.password = dto.getPassword();
+        this.name = dto.getName();
+    }
 }

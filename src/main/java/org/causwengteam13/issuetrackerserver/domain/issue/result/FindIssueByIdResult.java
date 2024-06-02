@@ -31,9 +31,21 @@ public class FindIssueByIdResult {
         this.id = issue.getId();
         this.title = issue.getTitle();
         this.description = issue.getDescription();
-        this.reporterName = issue.getReporter().getName();
-        this.assigneeName = issue.getAssignee().getName();
-        this.fixerName = issue.getFixer().getName();
+        if(issue.getReporter() == null) {
+            this.reporterName = null;
+        } else {
+            this.reporterName = issue.getReporter().getName();
+        }
+        if(issue.getAssignee() == null) {
+            this.assigneeName = null;
+        } else {
+            this.assigneeName = issue.getAssignee().getName();
+        }
+        if(issue.getFixer() == null) {
+            this.fixerName = null;
+        } else {
+            this.fixerName = issue.getFixer().getName();
+        }
         this.comments = issue.getComments();
         this.priority = issue.getPriority();
         this.status = issue.getStatus();

@@ -24,26 +24,29 @@ public class FindIssues {
     public FindIssuesResult execute(FindIssuesCommand command) {
         List<Issue> issues = new ArrayList<>();
 
-
-        if(command.searchAs().equals("PROJECT_ID")) {
-            issues = issueRepository.findByProjectId(command.projectId());
-            return new FindIssuesResult(issues);
-
-
-        } else if(command.searchAs().equals("ASSIGNEE_NAME")) {
-            issues = issueRepository.findByAssigneeName(command.assigneeName());
-            return new FindIssuesResult(issues);
-
-
-        } else if(command.searchAs().equals("REPORTER_NAME")) {
-            issues = issueRepository.findByReporterName(command.reporterName());
-            return new FindIssuesResult(issues);
-
-
-        } else {
-            //STATUS
-            issues = issueRepository.findByStatus(IssueStatus.valueOf(command.status()));
+        if (command.searchAs() == null) {
+            issues = issueRepository.findAll();
             return new FindIssuesResult(issues);
         }
+
+		switch (command.searchAs()) {
+			case "PROJECT_ID" -> {
+				issues = issueRepository.findByProjectId(command.projectId());
+				return new FindIssuesResult(issues);
+			}
+			case "ASSIGNEE_NAME" -> {
+				issues = issueRepository.findByAssigneeName(command.assigneeName());
+				return new FindIssuesResult(issues);
+			}
+			case "REPORTER_NAME" -> {
+				issues = issueRepository.findByReporterName(command.reporterName());
+				return new FindIssuesResult(issues);
+			}
+			default -> {
+				//STATUS
+				issues = issueRepository.findByStatus(IssueStatus.valueOf(command.status()));
+				return new FindIssuesResult(issues);
+			}
+		}
     }
 }

@@ -89,10 +89,9 @@ public class Issue extends AbstractEntity {
 		this.project = project;
 		this.reporter = reporter;
 		this.assignee = assignee;
-		this.priority = priority;
+		this.priority = priority == null ? IssuePriority.MAJOR : priority;
 		this.status = assignee == null ? IssueStatus.NEW : IssueStatus.ASSIGNED;
 	}
-
 
 	public static Issue of(User reporter, String title, String description,  Project project) {
 		return Issue.builder()
@@ -139,7 +138,7 @@ public class Issue extends AbstractEntity {
 		}
 
 		this.fixer = fixer;
-		this.status = IssueStatus.RESOLVED;
+		this.status = IssueStatus.FIXED;
 		addComment(fixer, String.format("Fixed by %s\n%s", fixer.getName(), comment));
 	}
 

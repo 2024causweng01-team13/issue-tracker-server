@@ -100,6 +100,7 @@ public class IssueTest {
 			assertThat(issue.getComments()).hasSize(1);
 			assertThat(issue.getComments().get(0).getAuthor()).isEqualTo(assigner);
 			assertThat(issue.getComments().get(0).getContent()).contains(comment);
+			assertThat(issue.getStatus()).isEqualTo(IssueStatus.ASSIGNED);
 		}
 	}
 
@@ -144,6 +145,7 @@ public class IssueTest {
 			assertThat(issue.getComments()).hasSize(1);
 			assertThat(issue.getComments().get(0).getAuthor()).isEqualTo(fixer);
 			assertThat(issue.getComments().get(0).getContent()).contains(comment);
+			assertThat(issue.getStatus()).isEqualTo(IssueStatus.FIXED);
 		}
 	}
 

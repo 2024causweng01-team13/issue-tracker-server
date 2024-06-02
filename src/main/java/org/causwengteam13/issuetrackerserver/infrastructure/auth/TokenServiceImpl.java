@@ -26,7 +26,9 @@ public class TokenServiceImpl implements TokenService {
 		String id_srt = String.valueOf(user.getId());
 
 		Map<String, Object> claims = new HashMap<>();
+		claims.put("id", user.getId());
 		claims.put("name", user.getName());
+		claims.put("expiresAt", expiredDate.getTime());
 
 		String jwt = Jwts.builder()
 			.signWith(SignatureAlgorithm.HS256, secretKey)

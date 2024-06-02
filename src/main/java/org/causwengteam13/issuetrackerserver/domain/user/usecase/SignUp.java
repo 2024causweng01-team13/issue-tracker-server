@@ -40,7 +40,7 @@ public class SignUp {
 
 		User savedUser = userRepository.save(user);
 
-		String token = tokenService.createIdToken(savedUser.getId());
+		String token = tokenService.createIdToken(savedUser);
 
 		return new SignUpResult(token);
 	}

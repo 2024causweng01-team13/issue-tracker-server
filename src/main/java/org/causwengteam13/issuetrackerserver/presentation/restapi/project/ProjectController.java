@@ -77,6 +77,10 @@ public class ProjectController {
 			.status(result.status())
 			.createdAt(result.createdAt())
 			.updatedAt(result.updatedAt())
+			.members(result.members().stream().map(m -> FindProjectByIdResponse.MemberResponse.builder()
+				.id(m.id())
+				.name(m.name())
+				.build()).toList())
 			.build();
 
 		return CommonResponse.success("Project found", response);

@@ -1,6 +1,7 @@
 package org.causwengteam13.issuetrackerserver.presentation.restapi.project.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.causwengteam13.issuetrackerserver.domain.project.entity.ProjectStatus;
 
@@ -14,6 +15,14 @@ public record FindProjectByIdResponse(
 	String managerName,
 	ProjectStatus status,
 	LocalDateTime createdAt,
-	LocalDateTime updatedAt
+	LocalDateTime updatedAt,
+	List<MemberResponse> members
 ) {
+
+	@Builder
+	public record MemberResponse(
+		Long id,
+		String name
+	) {
+	}
 }

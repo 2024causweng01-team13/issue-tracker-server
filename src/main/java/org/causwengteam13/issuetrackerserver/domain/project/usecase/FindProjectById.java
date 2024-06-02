@@ -29,6 +29,12 @@ public class FindProjectById {
 			.status(project.getStatus())
 			.createdAt(project.getCreatedAt())
 			.updatedAt(project.getUpdatedAt())
+			.members(project.getMemberships().stream()
+				.map(membership -> FindProjectByIdResult.MemberResult.builder()
+					.id(membership.getMember().getId())
+					.name(membership.getMember().getName())
+					.build())
+				.toList())
 			.build();
 	}
 }

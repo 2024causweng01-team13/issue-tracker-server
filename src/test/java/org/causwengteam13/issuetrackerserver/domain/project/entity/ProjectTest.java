@@ -14,7 +14,7 @@ public class ProjectTest {
 	@DisplayName("생성 테스트")
 	class CreateTest {
 
-		private final User manager = User.builder().id(1L).name("username").build();
+		private final User manager = User.builder().id(1L).loginId("u1").name("username").password("pwd").build();
 
 		@Test
 		@DisplayName("매니저가 null이면 프로젝트를 생성할 수 없다.")
@@ -41,7 +41,7 @@ public class ProjectTest {
 	@DisplayName("멤버 추가 테스트")
 	class AddMemberTest {
 
-		private final User manager = User.builder().id(1L).name("username").build();
+		private final User manager = User.builder().id(1L).loginId("u1").name("username").password("pw").build();
 		private final Project project = Project.builder()
 			.title("project title")
 			.description("project description")
@@ -50,7 +50,7 @@ public class ProjectTest {
 		@Test
 		@DisplayName("멤버를 추가할 수 있다.")
 		void test() {
-			User member = User.builder().id(2L).name("member").build();
+			User member = User.builder().id(2L).loginId("u2").name("member").password("pwd").build();
 			project.addMember(member);
 
 			assertTrue(project.getMemberships().stream().anyMatch(membership ->
@@ -62,7 +62,7 @@ public class ProjectTest {
 	@DisplayName("권한이 있는 멤버 확인 테스트")
 	class IsAuthorizedTest {
 
-		private final User manager = User.builder().id(1L).name("username").build();
+		private final User manager = User.builder().id(1L).loginId("u1").name("username").password("pwd").build();
 		private final Project project = Project.builder()
 			.title("project title")
 			.description("project description")
@@ -77,7 +77,7 @@ public class ProjectTest {
 		@Test
 		@DisplayName("프로젝트의 멤버는 프로젝트에 권한이 있다.")
 		void successOnMember() {
-			User member = User.builder().id(2L).name("member").build();
+			User member = User.builder().id(2L).loginId("u2").name("member").password("pwd").build();
 			project.addMember(member);
 
 			assertTrue(project.isAuthorized(member));
@@ -86,7 +86,7 @@ public class ProjectTest {
 		@Test
 		@DisplayName("프로젝트의 매니저도, 멤버도 아닌 유저는 프로젝트에 권한이 없다.")
 		void failOnNotManagerAndNotMember() {
-			User user = User.builder().id(3L).name("user").build();
+			User user = User.builder().id(3L).loginId("u3").name("user").password("pwd").build();
 
 			assertFalse(project.isAuthorized(user));
 		}

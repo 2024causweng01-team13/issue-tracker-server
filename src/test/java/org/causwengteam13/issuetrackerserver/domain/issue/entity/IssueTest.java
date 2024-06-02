@@ -18,19 +18,19 @@ public class IssueTest {
 	@DisplayName("코멘트 추가 테스트")
 	class addCommentTest {
 
-		private final User manager = User.builder().id(1L).name("manager").build();
+		private final User manager = User.builder().id(1L).loginId("u1").name("manager").password("password").build();
 		private final Project project = Project.builder().title("title").manager(manager).build();
 		private final Issue issue = Issue.builder()
 			.title("title")
 			.description("description")
 			.project(project)
-			.reporter(User.builder().id(2L).name("reporter").build())
+			.reporter(User.builder().id(2L).loginId("m2").name("reporter").password("password").build())
 			.build();
 
 		@Test
 		@DisplayName("작성자가 이슈를 포함하는 프로젝트의 멤버가 아니면 이슈에 코멘트를 추가할 수 없다.")
 		void fail() {
-			assertThatThrownBy(() -> issue.addComment(User.builder().id(3L).name("user1").build(), "content"))
+			assertThatThrownBy(() -> issue.addComment(User.builder().id(3L).loginId("u3").name("user1").password("password").build(), "content"))
 				.isInstanceOf(UserUnauthorizedInProjectProblem.class);
 		}
 
@@ -48,7 +48,7 @@ public class IssueTest {
 	@DisplayName("이슈 할당 테스트")
 	class assignTest {
 
-		private final User manager = User.builder().id(1L).name("manager").build();
+		private final User manager = User.builder().id(1L).loginId("u1").name("manager").password("password").build();
 		private Project project;
 		private Issue issue;
 
@@ -59,15 +59,15 @@ public class IssueTest {
 				.title("title")
 				.description("description")
 				.project(project)
-				.reporter(User.builder().id(2L).name("reporter").build())
+				.reporter(User.builder().id(2L).loginId("u2").name("reporter").password("pwd").build())
 				.build();
 		}
 
 		@Test
 		@DisplayName("할당하는 사람이 이슈를 포함하는 프로젝트의 멤버가 아니면 이슈를 할당할 수 없다.")
 		void failOnUnauthorizedAssigner() {
-			User assigner = User.builder().id(3L).name("assigner").build();
-			User assignee = User.builder().id(4L).name("assignee").build();
+			User assigner = User.builder().id(3L).loginId("u3").name("assigner").password("pwd").build();
+			User assignee = User.builder().id(4L).loginId("u4").name("assignee").password("pwd").build();
 
 			assertThatThrownBy(() -> issue.assign(assigner, assignee))
 				.isInstanceOf(UserUnauthorizedInProjectProblem.class);
@@ -76,8 +76,8 @@ public class IssueTest {
 		@Test
 		@DisplayName("할당받는 사람이 이슈를 포함하는 프로젝트의 멤버가 아니면 이슈를 할당할 수 없다.")
 		void failOnUnauthorizedAssignee() {
-			User assigner = User.builder().id(3L).name("assigner").build();
-			User assignee = User.builder().id(4L).name("assignee").build();
+			User assigner = User.builder().id(3L).loginId("u3").name("assigner").password("pwd").build();
+			User assignee = User.builder().id(4L).loginId("u4").name("assignee").password("pwd").build();
 
 			project.addMember(assigner);
 
@@ -88,8 +88,8 @@ public class IssueTest {
 		@Test
 		@DisplayName("할당하는 사람과 할당받는 사람이 이슈를 포함하는 프로젝트의 멤버면 이슈를 할당할 수 있다.")
 		void success() {
-			User assigner = User.builder().id(3L).name("assigner").build();
-			User assignee = User.builder().id(4L).name("assignee").build();
+			User assigner = User.builder().id(3L).loginId("u3").name("assigner").password("pwd").build();
+			User assignee = User.builder().id(4L).loginId("u4").name("assignee").password("pwd").build();
 
 			project.addMember(assigner);
 			project.addMember(assignee);

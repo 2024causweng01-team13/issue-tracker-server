@@ -51,7 +51,7 @@ public class ProjectTest {
 		@DisplayName("멤버를 추가할 수 있다.")
 		void test() {
 			User member = User.builder().id(2L).loginId("u2").name("member").password("pwd").build();
-			project.addMember(member);
+			project.addMember(manager, member);
 
 			assertTrue(project.getMemberships().stream().anyMatch(membership ->
 				membership.getMember().equals(member)));
@@ -78,7 +78,7 @@ public class ProjectTest {
 		@DisplayName("프로젝트의 멤버는 프로젝트에 권한이 있다.")
 		void successOnMember() {
 			User member = User.builder().id(2L).loginId("u2").name("member").password("pwd").build();
-			project.addMember(member);
+			project.addMember(manager, member);
 
 			assertTrue(project.isAuthorized(member));
 		}

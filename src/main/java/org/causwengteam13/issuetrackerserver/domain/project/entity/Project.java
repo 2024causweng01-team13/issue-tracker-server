@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.causwengteam13.issuetrackerserver.common.AbstractEntity;
 import org.causwengteam13.issuetrackerserver.domain.issue.entity.Issue;
+import org.causwengteam13.issuetrackerserver.domain.project.problem.UserNotManagerInProjectProblem;
 import org.causwengteam13.issuetrackerserver.domain.user.entity.User;
 
 import jakarta.persistence.CascadeType;
@@ -77,7 +78,11 @@ public class Project extends AbstractEntity {
 			.build();
 	}
 
-	public void addMember(User user) {
+	public void addMember(User adder, User user) {
+		if (!adder.isAdmin() && !adder.equals(this.manager)) {
+			throw new UserNotManagerInProjectProblem(adder.getId());
+		}
+
 		memberships.add(ProjectMembership.of(this, user));
 	}
 

@@ -80,7 +80,7 @@ public class IssueTest {
 			User assigner = User.builder().id(3L).loginId("u3").name("assigner").password("pwd").build();
 			User assignee = User.builder().id(4L).loginId("u4").name("assignee").password("pwd").build();
 
-			project.addMember(assigner);
+			project.addMember(manager, assigner);
 
 			assertThatThrownBy(() -> issue.assign(assigner, assignee, comment))
 				.isInstanceOf(UserUnauthorizedInProjectProblem.class);
@@ -92,8 +92,8 @@ public class IssueTest {
 			User assigner = User.builder().id(3L).loginId("u3").name("assigner").password("pwd").build();
 			User assignee = User.builder().id(4L).loginId("u4").name("assignee").password("pwd").build();
 
-			project.addMember(assigner);
-			project.addMember(assignee);
+			project.addMember(manager, assigner);
+			project.addMember(manager, assignee);
 
 			assertDoesNotThrow(() -> issue.assign(assigner, assignee, comment));
 			assertEquals(4L, issue.getAssignee().getId());
@@ -138,7 +138,7 @@ public class IssueTest {
 		void success() {
 			User fixer = User.builder().id(5L).loginId("u2").name("fixer").password("password").build();
 
-			project.addMember(fixer);
+			project.addMember(manager, fixer);
 			assertDoesNotThrow(() -> issue.fix(fixer, comment));
 
 			assertEquals(5L, issue.getFixer().getId());
@@ -187,7 +187,7 @@ public class IssueTest {
 		void success() {
 			User editor = User.builder().id(3L).loginId("u3").name("editor").password("pwd").build();
 
-			project.addMember(editor);
+			project.addMember(manager, editor);
 			assertDoesNotThrow(() -> issue.edit(editor, titleToChange, descriptionToChange, priorityToChange, statusToChange));
 
 			assertEquals(titleToChange, issue.getTitle());

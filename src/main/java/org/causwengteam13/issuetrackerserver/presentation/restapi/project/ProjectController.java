@@ -1,25 +1,30 @@
 package org.causwengteam13.issuetrackerserver.presentation.restapi.project;
 
+import org.causwengteam13.issuetrackerserver.domain.project.command.AddMemberToProjectCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByDateCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByMemberCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.CreateProjectCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.FindProjectByIdCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.command.FindProjectsCommand;
+import org.causwengteam13.issuetrackerserver.domain.project.result.AddMemberToProjectResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByDateResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByMemberResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.CreateProjectResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.FindProjectByIdResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.FindProjectsResult;
+import org.causwengteam13.issuetrackerserver.domain.project.usecase.AddMemberToProject;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.AnalyzeProjectByDate;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.AnalyzeProjectByMember;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.CreateProject;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.FindProjectById;
 import org.causwengteam13.issuetrackerserver.domain.project.usecase.FindProjects;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.CommonResponse;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.AddMemberToProjectRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.AnalyzeProjectByDateRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.AnalyzeProjectByMemberRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.CreateProjectRequest;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.request.FindProjectsRequest;
+import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AddMemberToProjectResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AnalyzeProjectByDateResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.AnalyzeProjectByMemberResponse;
 import org.causwengteam13.issuetrackerserver.presentation.restapi.project.response.CreateProjectResponse;
@@ -45,6 +50,7 @@ public class ProjectController {
 	private final FindProjects findProjects;
 	private final AnalyzeProjectByDate analyzeProjectByDate;
 	private final AnalyzeProjectByMember analyzeProjectByMember;
+	private final AddMemberToProject addMemberToProject;
 
 	@Operation(summary = "프로젝트 생성")
 	@PostMapping
@@ -156,5 +162,25 @@ public class ProjectController {
 		);
 
 		return CommonResponse.success("Project is analyzed by member", response);
+	}
+
+	@Operation(summary = "프로젝트 멤버 추가")
+	@PostMapping("/{projectId}/members")
+	public CommonResponse<AddMemberToProjectResponse> addMemberToProject(
+		@PathVariable(value = "projectId") Long projectId, @RequestBody AddMemberToProjectRequest request) {
+		AddMemberToProjectCommand command = AddMemberToProjectCommand.builder()
+				.projectId(projectId)
+				.adderId(request.getAdderId())
+				.memberId(request.getMemberId())
+				.build();
+
+		AddMemberToProjectResult result = addMemberToProject.execute(command);
+
+		AddMemberToProjectResponse response = AddMemberToProjectResponse.builder()
+			.projectId(result.projectId())
+			.memberId(result.memberId())
+			.build();
+
+		return CommonResponse.success("Member added to project", response);
 	}
 }

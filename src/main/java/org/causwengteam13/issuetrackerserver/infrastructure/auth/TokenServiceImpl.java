@@ -8,7 +8,8 @@ import java.util.Map;
 
 import org.causwengteam13.issuetrackerserver.domain.user.entity.User;
 import org.causwengteam13.issuetrackerserver.domain.user.problem.AuthFailedProblem;
-import org.causwengteam13.issuetrackerserver.domain.user.service.TokenService;
+import org.causwengteam13.issuetrackerserver.domain.user.service.CreateIdTokenService;
+import org.causwengteam13.issuetrackerserver.domain.user.service.ValidateTokenService;
 import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
@@ -16,7 +17,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
 @Service
-public class TokenServiceImpl implements TokenService {
+public class TokenServiceImpl implements CreateIdTokenService, ValidateTokenService {
 
 	private String secretKey = "sskey";
 
@@ -40,7 +41,7 @@ public class TokenServiceImpl implements TokenService {
 	}
 
 	@Override
-	public String validate(String token) {
+	public String validateToken(String token) {
 		Claims claims = null;
 
 		try {

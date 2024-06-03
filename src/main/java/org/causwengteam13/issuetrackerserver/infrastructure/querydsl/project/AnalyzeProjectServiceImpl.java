@@ -12,7 +12,8 @@ import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProje
 import org.causwengteam13.issuetrackerserver.domain.project.command.AnalyzeProjectByMemberCommand;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByDateResult;
 import org.causwengteam13.issuetrackerserver.domain.project.result.AnalyzeProjectByMemberResult;
-import org.causwengteam13.issuetrackerserver.domain.project.service.AnalyzeProjectService;
+import org.causwengteam13.issuetrackerserver.domain.project.service.AnalyzeProjectByDateService;
+import org.causwengteam13.issuetrackerserver.domain.project.service.AnalyzeProjectByMemberService;
 import org.causwengteam13.issuetrackerserver.infrastructure.querydsl.project.dto.AnalyzeProjectByMemberQuerydslResult;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class AnalyzeProjectServiceImpl implements AnalyzeProjectService {
+public class AnalyzeProjectServiceImpl implements AnalyzeProjectByDateService, AnalyzeProjectByMemberService {
 
 	private final JPAQueryFactory queryFactory;
 	private final EntityManager entityManager;

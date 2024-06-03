@@ -2,7 +2,7 @@ package org.causwengteam13.issuetrackerserver.presentation.restapi.auth;
 
 import java.io.IOException;
 
-import org.causwengteam13.issuetrackerserver.domain.user.service.TokenService;
+import org.causwengteam13.issuetrackerserver.domain.user.service.ValidateTokenService;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter  extends OncePerRequestFilter{
-    private final TokenService tokenService;
+    private final ValidateTokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter{
                 return;
             }
 
-            String email = tokenService.validate(token);
+            String email = tokenService.validateToken(token);
             if(email == null) {
                 filterChain.doFilter(request, response);
                 return;
